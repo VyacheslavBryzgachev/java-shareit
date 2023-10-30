@@ -8,12 +8,12 @@ import java.util.List;
 public interface ItemService {
     ItemDto getItemById(int itemId, int userId);
 
-    List<Item> getAllItems(int userId);
+    List<ItemDto> getAllItems(int userId);
 
-    List<Item> searchItemByText(String text, int userId);
+    List<ItemDto> searchItemByText(String text, int userId);
 
-    ItemDto createItem(Item item, int userId);
+    Item createItem(ItemDto itemDto, int userId);
 
-    ItemDto updateItem(Item item, int itemId, int userId);
+    Item updateItem(ItemDto itemDto, int itemId, int userId);
 
 }

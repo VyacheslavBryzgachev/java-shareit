@@ -17,9 +17,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -27,13 +25,13 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody Item item, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
-        return itemService.createItem(item, userId);
+    public Item createItem(@Valid @RequestBody ItemDto itemDto, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+        return itemService.createItem(itemDto, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestBody Item item, @PathVariable int itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
-        return itemService.updateItem(item, itemId, userId);
+    public Item updateItem(@RequestBody ItemDto itemDto, @PathVariable int itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+        return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
@@ -42,12 +40,12 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> getAllItems(@RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public List<ItemDto> getAllItems(@RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.getAllItems(userId);
     }
 
     @GetMapping("/search")
-    public List<Item> searchItemByText(@RequestParam(value = "text") String text, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public List<ItemDto> searchItemByText(@RequestParam(value = "text") String text, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.searchItemByText(text, userId);
     }
 }

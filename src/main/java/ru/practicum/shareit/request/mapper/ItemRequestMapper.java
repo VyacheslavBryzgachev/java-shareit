@@ -5,10 +5,17 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 public class ItemRequestMapper {
 
-    public ItemRequestDto userRequestDto(ItemRequest itemRequest) {
+    public ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
         return new ItemRequestDto(itemRequest.getId(),
                 itemRequest.getDescription(),
                 itemRequest.getRequester(),
                 itemRequest.getCreated());
+    }
+
+    public ItemRequest toItemRequest(ItemRequestDto itemRequestDto) {
+        return new ItemRequest(itemRequestDto.getId(),
+                itemRequestDto.getDescription(),
+                itemRequestDto.getRequester(),
+                itemRequestDto.getCreated());
     }
 }
