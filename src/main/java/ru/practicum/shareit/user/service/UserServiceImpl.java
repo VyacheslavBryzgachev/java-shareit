@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createUser(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         return inMemoryUserStorage.createUser(userMapper.toUser(userDto));
     }
 

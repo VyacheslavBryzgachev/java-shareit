@@ -3,6 +3,8 @@ package ru.practicum.shareit.item.dao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.UnknownIdException;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dao.InMemoryUserStorage;
@@ -18,14 +20,13 @@ import java.util.Map;
 public class InMemoryItemStorage {
     private final Map<Integer, Item> items = new HashMap<>();
     private final InMemoryUserStorage inMemoryUserStorage;
+    private final ItemMapper itemMapper = new ItemMapper();
     private int idCounter = 0;
 
 
     public Item getItemById(int itemId, int userId) {
-        for (Item item : items.values()) {
-            if (item.getId() == itemId) {
-                return item;
-            }
+        if (items.get(itemId) != null) {
+            return items.get(itemId);
         }
         throw new UnknownIdException("Вещи с таким id=" + itemId + " не найдено");
     }
@@ -58,16 +59,16 @@ public class InMemoryItemStorage {
         return searchItems;
     }
 
-    public Item createItem(Item item, int userId) {
+    public ItemDto createItem(Item item, int userId) {
         inMemoryUserStorage.getUserById(userId);
         setNextId();
         item.setId(idCounter);
         item.setOwner(userId);
         items.put(item.getId(), item);
-        return item;
+        return itemMapper.toItemDto(item);
     }
 
-    public Item updateItem(Item item, int itemId, int userId) {
+    public ItemDto updateItem(Item item, int itemId, int userId) {
         List<Item> items = getAllItems(userId);
         for (Item itemToUpd : items) {
             if (itemToUpd.getId() == itemId && itemToUpd.getOwner() == userId) {
@@ -80,7 +81,7 @@ public class InMemoryItemStorage {
                 if (item.getName() != null) {
                     itemToUpd.setName(item.getName());
                 }
-                return itemToUpd;
+                return itemMapper.toItemDto(itemToUpd);
             }
         }
         throw new UnknownIdException("Пользователю c id=" + userId + " не принадлежит вещь с id=" + itemId);

@@ -11,7 +11,7 @@ public interface UserService {
 
     List<UserDto> getAllUsers();
 
-    User createUser(UserDto userDto);
+    UserDto createUser(UserDto userDto);
 
     UserDto updateUser(User user, int userId);
 

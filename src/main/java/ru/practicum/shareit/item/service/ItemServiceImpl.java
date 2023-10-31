@@ -43,12 +43,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item createItem(ItemDto itemDto, int userId) {
+    public ItemDto createItem(ItemDto itemDto, int userId) {
         return inMemoryItemStorage.createItem(itemMapper.toItem(itemDto), userId);
     }
 
     @Override
-    public Item updateItem(ItemDto itemDto, int itemId, int userId) {
+    public ItemDto updateItem(ItemDto itemDto, int itemId, int userId) {
         return inMemoryItemStorage.updateItem(itemMapper.toItem(itemDto), itemId, userId);
     }
 

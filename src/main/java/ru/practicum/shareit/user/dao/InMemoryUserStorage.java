@@ -1,9 +1,12 @@
 package ru.practicum.shareit.user.dao;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exceptions.EmailAlreadyExistException;
 import ru.practicum.shareit.exceptions.UnknownIdException;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,17 +14,17 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+@RequiredArgsConstructor
 public class InMemoryUserStorage {
     private final Map<Integer, User> users = new HashMap<>();
+    private final UserMapper userMapper = new UserMapper();
     private int idCounter = 0;
 
 
     public User getUserById(int userId) {
-        for (User user : users.values()) {
-            if (user.getId() == userId) {
-                return user;
-            }
-        }
+       if (users.get(userId) != null) {
+           return users.get(userId);
+       }
         throw new UnknownIdException("Пользователь с таким id=" + userId + " не найден");
     }
 
@@ -29,7 +32,7 @@ public class InMemoryUserStorage {
         return new ArrayList<>(users.values());
     }
 
-    public User createUser(User user) {
+    public UserDto createUser(User user) {
         for (User u : users.values()) {
             if (u.getEmail().equals(user.getEmail())) {
                 throw new EmailAlreadyExistException("Пользователь с таким email=" + user.getEmail() + " уже существует");
@@ -38,7 +41,7 @@ public class InMemoryUserStorage {
         setNextId();
         user.setId(idCounter);
         users.put(user.getId(), user);
-        return user;
+        return userMapper.toUserDto(user);
     }
 
     public User updateUser(User user, int userId) {
