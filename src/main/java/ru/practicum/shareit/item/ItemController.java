@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -29,12 +30,13 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable int itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public ItemDto updateItem(@RequestBody ItemDto itemDto, @PathVariable long itemId,
+                              @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.updateItem(itemDto, itemId, userId);
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable int itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public ItemDto getItemById(@PathVariable long itemId, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.getItemById(itemId, userId);
     }
 
@@ -44,7 +46,14 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItemByText(@RequestParam(value = "text") String text, @RequestHeader(value = "X-Sharer-User-Id") int userId) {
+    public List<ItemDto> searchItemByText(@RequestParam(value = "text") String text,
+                                          @RequestHeader(value = "X-Sharer-User-Id") int userId) {
         return itemService.searchItemByText(text, userId);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto createComment(@Valid @RequestBody CommentDto commentDto, @PathVariable long itemId,
+                                    @RequestHeader(value = "X-Sharer-User-Id") long userId) {
+        return itemService.createComment(commentDto, itemId, userId);
     }
 }
