@@ -11,8 +11,8 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    @Query(value = "SELECT i FROM Item i " +
-            "WHERE (LOWER(i.name) LIKE LOWER(CONCAT('%', :text ,'%'))" +
-            " OR LOWER(i.description) LIKE LOWER(CONCAT('%' , :text, '%'))) AND i.available = true")
+    @Query(value = "SELECT i FROM Item i \n" +
+            "WHERE (LOWER(i.name) LIKE LOWER(CONCAT('%', :text ,'%'))\n" +
+            "OR LOWER(i.description) LIKE LOWER(CONCAT('%' , :text, '%'))) AND i.available = true")
     List<Item> searchItemsByText(@Param("text") String text);
 }
