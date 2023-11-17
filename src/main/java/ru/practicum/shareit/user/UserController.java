@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -22,6 +23,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper = new UserMapper();
 
     @GetMapping
     public List<UserDto> getAllUsers() {
@@ -35,12 +37,12 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@Valid @RequestBody UserDto userDto) {
-        return userService.createUser(userDto);
+        return userMapper.toUserDto(userService.createUser(userDto));
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@Valid @RequestBody User user, @PathVariable long userId) {
-        return userService.updateUser(user, userId);
+        return userMapper.toUserDto(userService.updateUser(user, userId));
     }
 
     @DeleteMapping("/{userId}")
