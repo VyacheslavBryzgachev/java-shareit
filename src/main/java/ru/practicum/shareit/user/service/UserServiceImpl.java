@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.UnknownIdException;
 import ru.practicum.shareit.user.dao.DbUserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -19,7 +20,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(long userId) {
-        return userMapper.toUserDto(dbUserStorage.getUserById(userId));
+        return userMapper.toUserDto(dbUserStorage.getUserById(userId)
+                .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено")));
     }
 
     @Override
@@ -40,7 +42,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user, long userId) {
-        return dbUserStorage.updateUser(user, userId);
+        return dbUserStorage.getUserById(userId)
+                .map(userUpd -> {
+                    if (user.getName() != null) {
+                        userUpd.setName(user.getName());
+                    }
+                    if (user.getEmail() != null) {
+                        userUpd.setEmail(user.getEmail());
+                    }
+                    return dbUserStorage.updateUser(userUpd);
+                })
+                .orElseThrow(() ->
+                        new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
     }
 
     @Override
