@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dao.DbBookingStorage;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoOut;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.enums.Status;
@@ -15,6 +17,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,9 +27,10 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final BookingMapper bookingMapper = new BookingMapper();
 
     @Override
-    public Booking createBooking(BookingDto bookingDto, long userId) {
+    public BookingDtoOut createBooking(BookingDto bookingDto, long userId) {
         if (bookingDto.getEnd().isBefore(bookingDto.getStart()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
             throw new BookingException("Дата окончания бронирования не может быть меньше или быть такой же как дата начала бронирования");
         }
@@ -47,60 +51,111 @@ public class BookingServiceImpl implements BookingService {
                 .item(item)
                 .status(Status.WAITING)
                 .build();
-        return dbBookingStorage.createBooking(booking);
+        return bookingMapper.bookingDtoOut(dbBookingStorage.createBooking(booking));
     }
 
     @Override
-    public List<Booking> getUserBookings(String state, Long userId) {
+    public List<BookingDtoOut> getUserBookings(String state, Long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
+        List<BookingDtoOut> bookingDtoList = new ArrayList<>();
         if (state == null || state.equals("ALL")) {
-            return bookingRepository.getUserBookingsIfStateAll(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateAll(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("CURRENT")) {
-            return bookingRepository.getUserBookingsIfStateCurrent(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateCurrent(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("FUTURE")) {
-            return bookingRepository.getUserBookingsIfStateFuture(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateFuture(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("REJECTED")) {
-            return bookingRepository.getUserBookingsIfStateRejected(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateRejected(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("PAST")) {
-            return bookingRepository.getUserBookingsIfStatePast(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStatePast(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("WAITING")) {
-            return bookingRepository.getUserBookingsIfStateWaiting(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateWaiting(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else {
             throw new WrongStateException("Unknown state: " + state);
         }
     }
 
     @Override
-    public List<Booking> getUserItemsBookings(String state, long userId) {
+    public List<BookingDtoOut> getUserItemsBookings(String state, long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
+        List<BookingDtoOut> bookingDtoList = new ArrayList<>();
         if (state == null || state.equals("ALL")) {
-            return bookingRepository.getUserItemsBookingsIfStateAll(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateAll(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("CURRENT")) {
-            return bookingRepository.getUserItemsBookingsIfStateCurrent(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateCurrent(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("FUTURE")) {
-            return bookingRepository.getUserItemsBookingsIfStateFuture(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateFuture(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("REJECTED")) {
-            return bookingRepository.getUserItemsBookingsIfStateRejected(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateRejected(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("PAST")) {
-            return bookingRepository.getUserItemsBookingsIfStatePast(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStatePast(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else if (state.equals("WAITING")) {
-            return bookingRepository.getUserItemsBookingsIfStateWaiting(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateWaiting(userId);
+            for (Booking b : bookings) {
+                bookingDtoList.add(bookingMapper.bookingDtoOut(b));
+            }
+            return bookingDtoList;
         } else {
             throw new WrongStateException("Unknown state: " + state);
         }
     }
 
     @Override
-    public Booking getBookingById(long bookingId, long userId) {
+    public BookingDtoOut getBookingById(long bookingId, long userId) {
         return dbBookingStorage.getBookingById(bookingId)
                 .filter(booking -> booking.getItem().getOwner().getId() == userId || booking.getBooker().getId() == userId)
+                .map(bookingMapper::bookingDtoOut)
                 .orElseThrow(() -> new UnknownIdException("Пользователю с id=" + userId + " не принадлежит данная вещь"));
     }
 
     @Override
-    public Booking updateBooking(long bookingId, boolean isApproved, long userId) {
+    public BookingDtoOut updateBooking(long bookingId, boolean isApproved, long userId) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new UnknownIdException("Id бронирования не найден"));
         if (!(booking.getItem().getOwner().getId() == userId)) {
@@ -112,6 +167,6 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(Status.REJECTED);
         }
-        return dbBookingStorage.updateBooking(booking);
+        return bookingMapper.bookingDtoOut(dbBookingStorage.updateBooking(booking));
     }
 }
