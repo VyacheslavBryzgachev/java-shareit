@@ -2,10 +2,11 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dao.InMemoryUserStorage;
+import ru.practicum.shareit.exceptions.UnknownIdException;
+import ru.practicum.shareit.user.dao.DbUserStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +15,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final InMemoryUserStorage inMemoryUserStorage;
     private final UserMapper userMapper = new UserMapper();
+    private final DbUserStorage dbUserStorage;
 
     @Override
-    public UserDto getUserById(int userId) {
-        return userMapper.toUserDto(inMemoryUserStorage.getUserById(userId));
+    public UserDto getUserById(long userId) {
+        return userMapper.toUserDto(dbUserStorage.getUserById(userId)
+                .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено")));
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<User> userList = inMemoryUserStorage.getAllUsers();
+        List<User> userList = dbUserStorage.getAllUsers();
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user : userList) {
             userDtoList.add(userMapper.toUserDto(user));
@@ -33,19 +35,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        return inMemoryUserStorage.createUser(userMapper.toUser(userDto));
+    public User createUser(UserDto userDto) {
+        return dbUserStorage.createUser(userMapper.toUser(userDto));
+    }
+
+
+    @Override
+    public User updateUser(User user, long userId) {
+        return dbUserStorage.getUserById(userId)
+                .map(userUpd -> {
+                    if (user.getName() != null) {
+                        userUpd.setName(user.getName());
+                    }
+                    if (user.getEmail() != null) {
+                        userUpd.setEmail(user.getEmail());
+                    }
+                    return dbUserStorage.updateUser(userUpd);
+                })
+                .orElseThrow(() ->
+                        new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
     }
 
     @Override
-    public UserDto updateUser(User user, int userId) {
-        return userMapper.toUserDto(inMemoryUserStorage.updateUser(user, userId));
+    public void deleteUser(long userId) {
+        dbUserStorage.deleteUser(userId);
     }
-
-    @Override
-    public void deleteUser(int userId) {
-        inMemoryUserStorage.deleteUser(userId);
-    }
-
 }
 

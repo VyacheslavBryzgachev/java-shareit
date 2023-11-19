@@ -2,17 +2,20 @@ package ru.practicum.shareit.item.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
+@Builder
 public class ItemDto {
-    private int id;
-    private int owner;
+    private long id;
+    private long owner;
     @NotNull
     @NotBlank
     private String name;
@@ -21,5 +24,7 @@ public class ItemDto {
     @NotNull
     @JsonProperty(required = true)
     private Boolean available;
-    private ItemRequest request;
+    private BookingDto lastBooking;
+    private BookingDto nextBooking;
+    private List<CommentDto> comments;
 }

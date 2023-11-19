@@ -2,10 +2,8 @@ package ru.practicum.shareit.item.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,22 +12,22 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Builder
 @Entity
-@Table(name = "items")
-public class Item {
+@Table(name = "comments")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private String text;
+    private String authorName;
+    private LocalDateTime createdTime;
     @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
-    private String name;
-    private String description;
-    private Boolean available;
+    @JoinColumn(name = "item_id")
+    private Item item;
 }
