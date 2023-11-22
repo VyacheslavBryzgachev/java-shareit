@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dao;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -28,8 +29,8 @@ public class DbItemStorage {
         return itemRepository.save(item);
     }
 
-    public List<Item> searchItemByText(String text) {
-        return itemRepository.searchItemsByText(text);
+    public List<Item> searchItemByText(String text, Pageable pageable) {
+        return itemRepository.searchItemsByText(text, pageable);
     }
 
     public Comment createComment(Comment comment) {

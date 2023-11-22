@@ -1,6 +1,5 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.request.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,24 +14,23 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
 @Entity
-@Table(name = "items")
-public class Item {
+@Table(name = "requests")
+public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
-    @JoinColumn(name = "owner_id")
-    private User owner;
-    private String name;
     private String description;
-    private Boolean available;
-    @Column(name = "request_id")
-    private long requestId;
+    @ManyToOne
+    @JoinColumn(name = "requester")
+    private User requester;
+    @Column(name = "created_time")
+    private LocalDateTime createdTime;
+    private int itemId;
 }
