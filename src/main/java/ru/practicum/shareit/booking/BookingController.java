@@ -30,7 +30,7 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     public BookingDtoOut updateBooking(@Valid @PathVariable long bookingId, @RequestParam(value = "approved") boolean isApproved,
-                                 @RequestHeader(value = "X-Sharer-User-Id") long userId) {
+                                       @RequestHeader(value = "X-Sharer-User-Id") long userId) {
         return bookingService.updateBooking(bookingId, isApproved, userId);
     }
 
@@ -41,13 +41,17 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoOut> getUserBookings(@RequestParam(value = "state", required = false) String state,
-                                         @RequestHeader(value = "X-Sharer-User-Id") Long userId) {
-        return bookingService.getUserBookings(state, userId);
+                                               @RequestHeader(value = "X-Sharer-User-Id") long userId,
+                                               @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
+                                               @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
+        return bookingService.getUserBookings(state, userId, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getUserItemBookings(@RequestParam(value = "state", required = false) String state,
-                                             @RequestHeader(value = "X-Sharer-User-Id") long userId) {
-        return bookingService.getUserItemsBookings(state, userId);
+                                                   @RequestHeader(value = "X-Sharer-User-Id") long userId,
+                                                   @RequestParam(value = "from", defaultValue = "0", required = false) Integer from,
+                                                   @RequestParam(value = "size", defaultValue = "10", required = false) Integer size) {
+        return bookingService.getUserItemsBookings(state, userId, from, size);
     }
 }
