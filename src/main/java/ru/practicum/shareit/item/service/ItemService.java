@@ -12,7 +12,7 @@ public interface ItemService {
 
     List<ItemDto> getAllItems(int userId, Integer from, Integer size);
 
-    List<ItemDto> searchItemByText(String text, int userId,Integer from, Integer size);
+    List<ItemDto> searchItemByText(String text, int userId, Integer from, Integer size);
 
     Item createItem(ItemDto itemDto, int userId);
 
