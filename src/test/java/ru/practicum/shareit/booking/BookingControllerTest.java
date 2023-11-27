@@ -63,8 +63,7 @@ class BookingControllerTest {
                         .builder()
                         .id(1)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(1)
                         .build())
                 .status(Status.WAITING)
@@ -103,8 +102,7 @@ class BookingControllerTest {
                         .builder()
                         .id(1)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(1)
                         .build())
                 .status(Status.APPROVED)
@@ -144,8 +142,7 @@ class BookingControllerTest {
                         .builder()
                         .id(1)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(1)
                         .build())
                 .status(Status.WAITING)
@@ -175,8 +172,7 @@ class BookingControllerTest {
                         .builder()
                         .id(1)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(1)
                         .build())
                 .status(Status.WAITING)
@@ -190,8 +186,7 @@ class BookingControllerTest {
                         .builder()
                         .id(2)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(2)
                         .build())
                 .status(Status.WAITING)
@@ -220,8 +215,7 @@ class BookingControllerTest {
                         .builder()
                         .id(1)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(1)
                         .build())
                 .status(Status.WAITING)
@@ -235,8 +229,7 @@ class BookingControllerTest {
                         .builder()
                         .id(2)
                         .build())
-                .booker(User.
-                        builder()
+                .booker(User.builder()
                         .id(2)
                         .build())
                 .status(Status.WAITING)

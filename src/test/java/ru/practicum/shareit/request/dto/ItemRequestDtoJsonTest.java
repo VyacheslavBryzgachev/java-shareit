@@ -32,8 +32,7 @@ class ItemRequestDtoJsonTest {
         String json = jsonTester.write(itemRequestDto).getJson();
 
         Assertions.assertEquals("{\"id\":1,\"description\":\"Описание\",\"requester\":1," +
-                        "\"created\":\"+999999999-12-31T23:59:59.999999999\",\"items\":null}"
-                , json);
+                        "\"created\":\"+999999999-12-31T23:59:59.999999999\",\"items\":null}", json);
     }
 
     @Test

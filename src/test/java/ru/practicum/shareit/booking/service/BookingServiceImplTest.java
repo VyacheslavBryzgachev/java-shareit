@@ -256,7 +256,7 @@ class BookingServiceImplTest {
     @Test
     void getUserBookingsThrowsExceptionIfInvalidState() {
         WrongStateException exception = Assertions.assertThrows(WrongStateException.class,
-                ()->bookingService.getUserBookings("INVALID", 1, 0, 2));
+                () -> bookingService.getUserBookings("INVALID", 1, 0, 2));
         Assertions.assertEquals("Unknown state: INVALID", exception.getMessage());
     }
 
@@ -490,7 +490,7 @@ class BookingServiceImplTest {
     @Test
     void getUserItemsBookingsThrowsExceptionIfInvalidState() {
         WrongStateException exception = Assertions.assertThrows(WrongStateException.class,
-                ()->bookingService.getUserItemsBookings("INVALID", 1, 0, 2));
+                () -> bookingService.getUserItemsBookings("INVALID", 1, 0, 2));
         Assertions.assertEquals("Unknown state: INVALID", exception.getMessage());
     }
 
