@@ -67,7 +67,8 @@ values (1, 'Item1', 'Item1Desc', true, 0),
 insert into bookings(booker_id, item_id, start_booking, end_booking, status, created_time)
 values (1, 1, '2023-11-24T15:35:30', '2023-12-24T15:35:30', 'WAITING', current_timestamp()),
        (2, 1, '2023-12-23T15:35:30', '2023-12-24T15:35:30', 'APPROVED', current_timestamp()),
-       (2, 2, '2023-11-15T15:35:30', '2023-12-24T15:35:30', 'APPROVED', current_timestamp());
+       (2, 2, '2023-11-15T15:35:30', '2023-12-24T15:35:30', 'APPROVED', current_timestamp()),
+       (2, 3, '2023-11-15T15:35:30', '2023-12-24T15:35:30', 'WAITING', current_timestamp());
 
 insert into comments(item_id, text, author_name, created_time)
 VALUES (1, 'Комментарий', 'Автор', '2023-11-24T15:35:30');

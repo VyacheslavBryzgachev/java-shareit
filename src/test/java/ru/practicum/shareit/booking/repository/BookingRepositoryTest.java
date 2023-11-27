@@ -55,7 +55,7 @@ class BookingRepositoryTest {
     @Test
     void getUserBookingsIfStateWaitingTest() {
         List<Booking> bookings = bookingRepository.getUserBookingsIfStateWaiting(2, PageRequest.of(0, 10));
-        Assertions.assertEquals(0, bookings.size());
+        Assertions.assertEquals(1, bookings.size());
     }
 
     @Test
@@ -67,13 +67,13 @@ class BookingRepositoryTest {
     @Test
     void getUserItemsBookingsIfStateAllTest() {
         List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateAll(2, PageRequest.of(0, 10));
-        Assertions.assertEquals(1, bookings.size());
+        Assertions.assertEquals(2, bookings.size());
     }
 
     @Test
     void getUserItemsBookingsIfStateCurrentTest() {
         List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateCurrent(2, PageRequest.of(0, 10));
-        Assertions.assertEquals(1, bookings.size());
+        Assertions.assertEquals(2, bookings.size());
     }
 
     @Test
@@ -91,7 +91,7 @@ class BookingRepositoryTest {
     @Test
     void getUserItemsBookingsIfStateWaitingTest() {
         List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateWaiting(2, PageRequest.of(0, 10));
-        Assertions.assertEquals(0, bookings.size());
+        Assertions.assertEquals(1, bookings.size());
     }
 
     @Test

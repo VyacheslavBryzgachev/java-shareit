@@ -101,6 +101,27 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void getItemByIdReturnValidItemIWithOnlyLastBookingIfValidId() {
+        ItemDto expected = ItemDto.builder()
+                .id(3)
+                .name("Item3")
+                .description("Item3Desc")
+                .owner(2)
+                .available(true)
+                .lastBooking(BookingDto.builder()
+                        .id(4)
+                        .bookerId(2)
+                        .itemId(0)
+                        .build())
+                .comments(Collections.emptyList())
+                .requestId(0)
+                .build();
+        ItemDto actual = itemService.getItemById(3, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     void getItemByIdReturnValidItemNoBookingsIfValidId() {
         ItemDto expected = ItemDto.builder()
                 .id(3)
@@ -108,6 +129,11 @@ class ItemServiceImplTest {
                 .description("Item3Desc")
                 .owner(2)
                 .available(true)
+                .lastBooking(BookingDto.builder()
+                        .id(4)
+                        .bookerId(2)
+                        .itemId(0)
+                        .build())
                 .requestId(0)
                 .comments(Collections.emptyList())
                 .build();

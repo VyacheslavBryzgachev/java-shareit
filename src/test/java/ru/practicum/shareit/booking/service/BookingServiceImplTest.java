@@ -39,7 +39,7 @@ class BookingServiceImplTest {
     void createBookingReturnValidBookingIfValidArgument() {
         BookingDtoOut expected = BookingDtoOut
                 .builder()
-                .id(4)
+                .id(5)
                 .booker(User
                         .builder()
                         .id(1)
