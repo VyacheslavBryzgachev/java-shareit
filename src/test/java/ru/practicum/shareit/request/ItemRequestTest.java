@@ -11,28 +11,25 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.RequestService;
-import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class ItemRequestTest {
+class ItemRequestTest {
     @Mock
     RequestService requestService;
 
@@ -52,43 +49,14 @@ public class ItemRequestTest {
 
     @Test
     void createTest() throws Exception {
-
-        Item item1 = Item
-                .builder()
-                .id(1)
-                .name("Item1")
-                .description("Item1Desc")
-                .available(true)
-                .build();
-        Item item2 = Item
-                .builder()
-                .id(2)
-                .name("Item2")
-                .description("Item2Desc")
-                .available(false)
-                .build();
-        List<Item> items = Arrays.asList(item1, item2);
         ItemRequestDto itemRequestDto = ItemRequestDto
                 .builder()
-                .description("Хотел бы воспользоваться щёткой для обуви")
-                .items(items)
-                .created(LocalDateTime.now())
+                .id(2)
+                .requester(1)
+                .description("Описание")
                 .build();
-
-        ItemRequest itemRequest = ItemRequest
-                .builder()
-                .id(1)
-                .description("Хотел бы воспользоваться щёткой для обуви")
-                .itemId(1)
-                .requester(User
-                        .builder()
-                        .id(1)
-                        .build())
-                .createdTime(LocalDateTime.now())
-                .build();
-
         when(requestService.create(any(), anyLong()))
-                .thenReturn(itemRequest);
+                .thenReturn(itemRequestDto);
         mockMvc.perform(post("/requests")
                         .header("X-Sharer-User-Id", 1L)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -99,4 +67,69 @@ public class ItemRequestTest {
         verify(requestService, times(1)).create(any(), anyLong());
     }
 
+    @Test
+    void getByIdTest() throws Exception {
+        ItemRequestDto itemRequestDto = ItemRequestDto
+                .builder()
+                .id(2)
+                .requester(1)
+                .description("Описание")
+                .build();
+        when(requestService.getById(anyLong(), anyLong()))
+                .thenReturn(itemRequestDto);
+        mockMvc.perform(get("/requests/{requestId}", 1L)
+                        .header("X-Sharer-User-Id", 1L))
+                .andExpect(status().isOk());
+        verify(requestService, times(1)).getById(anyLong(), anyLong());
+    }
+
+    @Test
+    void getAllTest() throws Exception {
+        ItemRequestDto itemRequestDto1 = ItemRequestDto
+                .builder()
+                .id(1)
+                .requester(1)
+                .description("Описание1")
+                .build();
+        ItemRequestDto itemRequestDto2 = ItemRequestDto
+                .builder()
+                .id(2)
+                .requester(2)
+                .description("Описание2")
+                .build();
+        List<ItemRequestDto> requestDtos = Arrays.asList(itemRequestDto1, itemRequestDto2);
+        when(requestService.getAll(anyLong()))
+                .thenReturn(requestDtos);
+        mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", 1L))
+                .andExpect(jsonPath("$.size()").value(requestDtos.size()))
+                .andExpect(status().isOk());
+        verify(requestService, times(1)).getAll(anyLong());
+    }
+
+    @Test
+    void getAllFromAnotherUserTest() throws Exception {
+        ItemRequestDto itemRequestDto1 = ItemRequestDto
+                .builder()
+                .id(1)
+                .requester(1)
+                .description("Описание1")
+                .build();
+        ItemRequestDto itemRequestDto2 = ItemRequestDto
+                .builder()
+                .id(2)
+                .requester(2)
+                .description("Описание2")
+                .build();
+        List<ItemRequestDto> requestDtos = Arrays.asList(itemRequestDto1, itemRequestDto2);
+        when(requestService.getAllFromAnotherUser(anyLong(), anyInt(), anyInt()))
+                .thenReturn(requestDtos);
+        mockMvc.perform(get("/requests/all")
+                        .param("from", String.valueOf(1))
+                        .param("size", String.valueOf(1))
+                        .header("X-Sharer-User-Id", 1L))
+                .andExpect(jsonPath("$.size()").value(requestDtos.size()))
+                .andExpect(status().isOk());
+        verify(requestService, times(1)).getAllFromAnotherUser(anyLong(), anyInt(), anyInt());
+    }
 }

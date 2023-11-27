@@ -16,7 +16,6 @@ import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.enums.Status;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class BookingControllerTest {
+class BookingControllerTest {
     @Mock
     BookingService bookingService;
 

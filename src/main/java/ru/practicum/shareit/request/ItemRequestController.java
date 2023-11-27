@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.mapper.ItemRequestMapper;
-import ru.practicum.shareit.request.service.RequestServiceImpl;
+import ru.practicum.shareit.request.service.RequestService;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -20,13 +19,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
-    private final RequestServiceImpl requestService;
-    private final ItemRequestMapper itemRequestMapper = new ItemRequestMapper();
+    private final RequestService requestService;
 
     @PostMapping
     public ItemRequestDto create(@Valid @RequestBody ItemRequestDto itemRequestDto,
                                  @RequestHeader(value = "X-Sharer-User-Id") long userId) {
-        return itemRequestMapper.toItemRequestDto(requestService.create(itemRequestDto, userId));
+        return requestService.create(itemRequestDto, userId);
     }
 
     @GetMapping

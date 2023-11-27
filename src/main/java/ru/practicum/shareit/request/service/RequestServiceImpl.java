@@ -29,12 +29,12 @@ public class RequestServiceImpl implements RequestService {
     private final ItemRequestMapper itemRequestMapper = new ItemRequestMapper();
 
     @Override
-    public ItemRequest create(ItemRequestDto itemRequestDto, long userId) {
+    public ItemRequestDto create(ItemRequestDto itemRequestDto, long userId) {
         User user = dbUserStorage.getUserById(userId)
                 .orElseThrow(() -> new UnknownIdException("Пользователя таким id=" + userId + " не найдено"));
         itemRequestDto.setRequester(user.getId());
         itemRequestDto.setCreated(LocalDateTime.now());
-        return dbRequestStorage.create(itemRequestMapper.toItemRequest(itemRequestDto));
+        return itemRequestMapper.toItemRequestDto(dbRequestStorage.create(itemRequestMapper.toItemRequest(itemRequestDto)));
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
@@ -25,7 +24,7 @@ import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.IS
 @Sql(scripts = {"classpath:dataTest.sql"},
         config = @SqlConfig(transactionMode = ISOLATED),
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class RequestServiceImplTest {
+class RequestServiceImplTest {
 
     @Autowired
     RequestService requestService;
@@ -52,19 +51,14 @@ public class RequestServiceImplTest {
                 .created(LocalDateTime.now())
                 .description("Описание")
                 .build();
-        ItemRequest expected = ItemRequest
+        ItemRequestDto expected = ItemRequestDto
                 .builder()
                 .id(2)
-                .requester(User
-                        .builder()
-                        .id(1)
-                        .name("User1")
-                        .email("User1@mail.ru")
-                        .build())
+                .requester(1)
                 .description("Описание")
                 .build();
-        ItemRequest actual = requestService.create(itemRequest, 1);
-        expected.setCreatedTime(actual.getCreatedTime());
+        ItemRequestDto actual = requestService.create(itemRequest, 1);
+        expected.setCreated(actual.getCreated());
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(expected, actual);
     }

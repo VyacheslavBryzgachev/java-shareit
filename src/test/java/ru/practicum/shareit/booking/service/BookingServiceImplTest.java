@@ -9,10 +9,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.enums.Status;
 import ru.practicum.shareit.exceptions.BookingException;
 import ru.practicum.shareit.exceptions.UnknownIdException;
+import ru.practicum.shareit.exceptions.WrongStateException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -30,7 +30,7 @@ import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.IS
         config = @SqlConfig(transactionMode = ISOLATED),
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @AutoConfigureTestDatabase
-public class BookingServiceImplTest {
+class BookingServiceImplTest {
 
     @Autowired
     BookingService bookingService;
@@ -39,7 +39,7 @@ public class BookingServiceImplTest {
     void createBookingReturnValidBookingIfValidArgument() {
         BookingDtoOut expected = BookingDtoOut
                 .builder()
-                .id(3)
+                .id(4)
                 .booker(User
                         .builder()
                         .id(1)
@@ -94,6 +94,22 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void createBookingThrowExceptionIfStartEqualEnd() {
+        BookingDto bookingDto = BookingDto
+                .builder()
+                .bookerId(1)
+                .itemId(1)
+                .status(Status.WAITING)
+                .start(LocalDateTime.of(2023, 11, 11, 15, 30, 15))
+                .end(LocalDateTime.of(2023, 11, 11, 15, 30, 15))
+                .build();
+        BookingException exception = Assertions.assertThrows(BookingException.class,
+                () -> bookingService.createBooking(bookingDto, 1));
+        Assertions.assertEquals(exception.getMessage(),
+                "Дата окончания бронирования не может быть меньше или быть такой же как дата начала бронирования");
+    }
+
+    @Test
     void createBookingThrowExceptionsIfItemAvailableFalse() {
         BookingDto bookingDto = BookingDto
                 .builder()
@@ -109,7 +125,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getBookingByIdReturnValidBookingIfValidArguments() {
+    void getBookingByIdReturnValidBookingIfValidArgumentsStateAll() {
         BookingDtoOut expected = BookingDtoOut
                 .builder()
                 .id(1)
@@ -140,6 +156,108 @@ public class BookingServiceImplTest {
         BookingDtoOut actual = bookingService.getBookingById(1, 1);
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getUserBookingsReturnValidListIfValidArgumentsStateCurrent() {
+        List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
+        BookingDtoOut bookingDto = BookingDtoOut
+                .builder()
+                .id(1)
+                .booker(User
+                        .builder()
+                        .id(1)
+                        .name("User1")
+                        .email("User1@mail.ru")
+                        .build())
+                .item(Item
+                        .builder()
+                        .id(1)
+                        .owner(User
+                                .builder()
+                                .id(1)
+                                .name("User1")
+                                .email("User1@mail.ru")
+                                .build())
+                        .name("Item1")
+                        .description("Item1Desc")
+                        .available(true)
+                        .requestId(0)
+                        .build())
+                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .status(Status.WAITING)
+                .build();
+        bookingDtoOuts.add(bookingDto);
+        List<BookingDtoOut> actual = bookingService.getUserBookings("CURRENT", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(bookingDtoOuts.size(), actual.size());
+        Assertions.assertEquals(bookingDtoOuts.get(0), actual.get(0));
+    }
+
+    @Test
+    void getUserBookingsReturnValidListIfValidArgumentsStateFuture() {
+        List<BookingDtoOut> actual = bookingService.getUserBookings("FUTURE", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(0, actual.size());
+    }
+
+    @Test
+    void getUserBookingsReturnValidListIfValidArgumentsStateRejected() {
+        List<BookingDtoOut> actual = bookingService.getUserBookings("REJECTED", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(0, actual.size());
+    }
+
+    @Test
+    void getUserBookingsReturnValidListIfValidArgumentsStatePast() {
+        List<BookingDtoOut> actual = bookingService.getUserBookings("PAST", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(0, actual.size());
+    }
+
+    @Test
+    void getUserBookingsReturnValidListIfValidArgumentsStateWaiting() {
+        List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
+        BookingDtoOut bookingDto = BookingDtoOut
+                .builder()
+                .id(1)
+                .booker(User
+                        .builder()
+                        .id(1)
+                        .name("User1")
+                        .email("User1@mail.ru")
+                        .build())
+                .item(Item
+                        .builder()
+                        .id(1)
+                        .owner(User
+                                .builder()
+                                .id(1)
+                                .name("User1")
+                                .email("User1@mail.ru")
+                                .build())
+                        .name("Item1")
+                        .description("Item1Desc")
+                        .available(true)
+                        .requestId(0)
+                        .build())
+                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .status(Status.WAITING)
+                .build();
+        bookingDtoOuts.add(bookingDto);
+        List<BookingDtoOut> actual = bookingService.getUserBookings("WAITING", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(bookingDtoOuts.size(), actual.size());
+        Assertions.assertEquals(bookingDtoOuts.get(0), actual.get(0));
+    }
+
+    @Test
+    void getUserBookingsThrowsExceptionIfInvalidState() {
+        WrongStateException exception = Assertions.assertThrows(WrongStateException.class,
+                ()->bookingService.getUserBookings("INVALID", 1, 0, 2));
+        Assertions.assertEquals("Unknown state: INVALID", exception.getMessage());
     }
 
     @Test
@@ -180,7 +298,7 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    void getUserItemsBookingsReturnValidListIfValidArguments() {
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStateAll() {
         List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
         BookingDtoOut bookingDto1 = BookingDtoOut
                 .builder()
@@ -205,7 +323,7 @@ public class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .start(LocalDateTime.of(2023,12,23,15,35,30))
                 .end(LocalDateTime.of(2023,12,24,15,35,30))
                 .status(Status.APPROVED)
                 .build();
@@ -232,7 +350,7 @@ public class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .start(LocalDateTime.of(2023,12,23,15,35,30))
                 .end(LocalDateTime.of(2023,12,24,15,35,30))
                 .status(Status.APPROVED)
                 .build();
@@ -245,10 +363,156 @@ public class BookingServiceImplTest {
     }
 
     @Test
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStateCurrent() {
+        List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
+        BookingDtoOut bookingDto1 = BookingDtoOut
+                .builder()
+                .id(1)
+                .booker(User
+                        .builder()
+                        .id(1)
+                        .name("User1")
+                        .email("User1@mail.ru")
+                        .build())
+                .item(Item
+                        .builder()
+                        .id(1)
+                        .owner(User
+                                .builder()
+                                .id(1)
+                                .name("User1")
+                                .email("User1@mail.ru")
+                                .build())
+                        .name("Item1")
+                        .description("Item1Desc")
+                        .available(true)
+                        .requestId(0)
+                        .build())
+                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .status(Status.WAITING)
+                .build();
+        bookingDtoOuts.add(bookingDto1);
+        List<BookingDtoOut> actual = bookingService.getUserItemsBookings("CURRENT", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(bookingDtoOuts.size(), actual.size());
+        Assertions.assertEquals(bookingDtoOuts.get(0), actual.get(0));
+    }
+
+    @Test
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStateFuture() {
+        List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
+        BookingDtoOut bookingDto1 = BookingDtoOut
+                .builder()
+                .id(2)
+                .booker(User
+                        .builder()
+                        .id(2)
+                        .name("User2")
+                        .email("User2@mail.ru")
+                        .build())
+                .item(Item
+                        .builder()
+                        .id(1)
+                        .owner(User
+                                .builder()
+                                .id(1)
+                                .name("User1")
+                                .email("User1@mail.ru")
+                                .build())
+                        .name("Item1")
+                        .description("Item1Desc")
+                        .available(true)
+                        .requestId(0)
+                        .build())
+                .start(LocalDateTime.of(2023,12,23,15,35,30))
+                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .status(Status.APPROVED)
+                .build();
+        bookingDtoOuts.add(bookingDto1);
+        List<BookingDtoOut> actual = bookingService.getUserItemsBookings("FUTURE", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(bookingDtoOuts.size(), actual.size());
+        Assertions.assertEquals(bookingDtoOuts.get(0), actual.get(0));
+    }
+
+    @Test
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStateRejected() {
+        List<BookingDtoOut> actual = bookingService.getUserItemsBookings("REJECTED", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(0, actual.size());
+    }
+
+    @Test
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStatePast() {
+        List<BookingDtoOut> actual = bookingService.getUserItemsBookings("PAST", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(0, actual.size());
+    }
+
+    @Test
+    void getUserItemsBookingsReturnValidListIfValidArgumentsStateWaiting() {
+        List<BookingDtoOut> bookingDtoOuts = new ArrayList<>();
+        BookingDtoOut bookingDto1 = BookingDtoOut
+                .builder()
+                .id(1)
+                .booker(User
+                        .builder()
+                        .id(1)
+                        .name("User1")
+                        .email("User1@mail.ru")
+                        .build())
+                .item(Item
+                        .builder()
+                        .id(1)
+                        .owner(User
+                                .builder()
+                                .id(1)
+                                .name("User1")
+                                .email("User1@mail.ru")
+                                .build())
+                        .name("Item1")
+                        .description("Item1Desc")
+                        .available(true)
+                        .requestId(0)
+                        .build())
+                .start(LocalDateTime.of(2023,11,24,15,35,30))
+                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .status(Status.WAITING)
+                .build();
+        bookingDtoOuts.add(bookingDto1);
+        List<BookingDtoOut> actual = bookingService.getUserItemsBookings("WAITING", 1, 0, 2);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(bookingDtoOuts.size(), actual.size());
+        Assertions.assertEquals(bookingDtoOuts.get(0), actual.get(0));
+    }
+
+    @Test
+    void getUserItemsBookingsThrowsExceptionIfInvalidState() {
+        WrongStateException exception = Assertions.assertThrows(WrongStateException.class,
+                ()->bookingService.getUserItemsBookings("INVALID", 1, 0, 2));
+        Assertions.assertEquals("Unknown state: INVALID", exception.getMessage());
+    }
+
+    @Test
     void updateBookingSetStatusApprovedIfArgumentTrue() {
         BookingDtoOut bookingDto = bookingService.updateBooking(1, true, 1);
         Assertions.assertNotNull(bookingDto);
         Assertions.assertEquals(Status.APPROVED, bookingDto.getStatus());
+    }
+
+    @Test
+    void updateBookingThrowExceptionIfWrongUserId() {
+        UnknownIdException exception = Assertions.assertThrows(UnknownIdException.class, () ->
+                bookingService.updateBooking(1, true, 99));
+        Assertions.assertEquals("Пользователю с id=99 не принадлежит данная вещь", exception.getMessage());
+    }
+
+    @Test
+    void updateBookingThrowExceptionIfStateNotWaiting() {
+        BookingException exception = Assertions.assertThrows(BookingException.class, () ->
+                bookingService.updateBooking(2, true, 1));
+        Assertions.assertEquals("Ошибка бронирования", exception.getMessage());
     }
 
     @Test

@@ -17,6 +17,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
@@ -86,10 +87,31 @@ class ItemServiceImplTest {
                         .bookerId(1)
                         .itemId(0)
                         .build())
+                .nextBooking(BookingDto.builder()
+                        .id(2)
+                        .bookerId(2)
+                        .itemId(0)
+                        .build())
                 .comments(commentDtos)
                 .requestId(0)
                 .build();
         ItemDto actual = itemService.getItemById(1, 1);
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getItemByIdReturnValidItemNoBookingsIfValidId() {
+        ItemDto expected = ItemDto.builder()
+                .id(3)
+                .name("Item3")
+                .description("Item3Desc")
+                .owner(2)
+                .available(true)
+                .requestId(0)
+                .comments(Collections.emptyList())
+                .build();
+        ItemDto actual = itemService.getItemById(3, 2);
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(expected, actual);
     }
@@ -123,6 +145,11 @@ class ItemServiceImplTest {
                         .bookerId(1)
                         .itemId(0)
                         .build())
+                .nextBooking(BookingDto.builder()
+                        .id(2)
+                        .bookerId(2)
+                        .itemId(0)
+                        .build())
                 .comments(commentDtos)
                 .requestId(0)
                 .build();
@@ -136,6 +163,7 @@ class ItemServiceImplTest {
                 .id(1)
                 .name("Item1Upd")
                 .description("Item1DescUpd")
+                .available(true)
                 .build();
 
         Item expected = Item.builder()
@@ -193,6 +221,13 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void searchItemByTextReturnEmptyListIfTextIsBlank() {
+        List<ItemDto> actual = itemService.searchItemByText("", 1, 0, 2);
+        List<ItemDto> expected = Collections.emptyList();
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
     void createCommentReturnValidCommentIfValidArgument() {
         CommentDto commentDto = CommentDto.builder()
                 .text("Комментарий")
@@ -200,22 +235,22 @@ class ItemServiceImplTest {
         Comment expected = Comment.builder()
                 .id(2)
                 .item(Item.builder()
-                        .id(1)
+                        .id(2)
                         .owner(User.builder()
-                                .id(1)
-                                .name("User1")
-                                .email("User1@mail.ru")
+                                .id(2)
+                                .name("User2")
+                                .email("User2@mail.ru")
                                 .build())
-                        .name("Item1")
-                        .description("Item1Desc")
-                        .available(true)
-                        .requestId(0)
+                        .name("Item2")
+                        .description("Item2Desc")
+                        .available(false)
+                        .requestId(1)
                         .build())
                 .createdTime(commentDto.getCreated())
                 .authorName("User2")
                 .text("Комментарий")
                 .build();
-        Comment actual = itemService.createComment(commentDto, 1, 2);
+        Comment actual = itemService.createComment(commentDto, 2, 2);
         expected.setCreatedTime(actual.getCreatedTime());
         Assertions.assertNotNull(actual);
         Assertions.assertEquals(expected, actual);
@@ -231,5 +266,13 @@ class ItemServiceImplTest {
         Assertions.assertEquals("Этот пользователь не может оставить комментарий к этой вещи", exception.getMessage());
     }
 
-
+    @Test
+    void createCommentThrowExceptionIfBookingNotEnd() {
+        CommentDto commentDto = CommentDto.builder()
+                .text("Комментарий")
+                .build();
+        BookingException exception = Assertions.assertThrows(BookingException.class,
+                () -> itemService.createComment(commentDto, 1, 2));
+        Assertions.assertEquals("Бронирование еще не закончилось", exception.getMessage());
+    }
 }
