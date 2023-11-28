@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dao.DbBookingStorage;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -17,6 +19,7 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,47 +53,49 @@ public class BookingServiceImpl implements BookingService {
                 .end(bookingDto.getEnd())
                 .item(item)
                 .status(Status.WAITING)
+                .createdTime(LocalDateTime.now())
                 .build();
         return bookingMapper.bookingDtoOut(dbBookingStorage.createBooking(booking));
     }
 
     @Override
-    public List<BookingDtoOut> getUserBookings(String state, Long userId) {
+    public List<BookingDtoOut> getUserBookings(String state, long userId, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
         List<BookingDtoOut> bookingDtoList = new ArrayList<>();
+        Pageable pageWithFromAndSize = PageRequest.of(from, size);
         if (state == null || state.equals("ALL")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStateAll(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateAll(userId, from, size);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("CURRENT")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStateCurrent(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateCurrent(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("FUTURE")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStateFuture(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateFuture(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("REJECTED")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStateRejected(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateRejected(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("PAST")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStatePast(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStatePast(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("WAITING")) {
-            List<Booking> bookings = bookingRepository.getUserBookingsIfStateWaiting(userId);
+            List<Booking> bookings = bookingRepository.getUserBookingsIfStateWaiting(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
@@ -101,42 +106,43 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoOut> getUserItemsBookings(String state, long userId) {
+    public List<BookingDtoOut> getUserItemsBookings(String state, long userId, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UnknownIdException("Пользователя с таким id=" + userId + " не найдено"));
         List<BookingDtoOut> bookingDtoList = new ArrayList<>();
+        Pageable pageWithFromAndSize = PageRequest.of(from, size);
         if (state == null || state.equals("ALL")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateAll(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateAll(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("CURRENT")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateCurrent(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateCurrent(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("FUTURE")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateFuture(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateFuture(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("REJECTED")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateRejected(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateRejected(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("PAST")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStatePast(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStatePast(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }
             return bookingDtoList;
         } else if (state.equals("WAITING")) {
-            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateWaiting(userId);
+            List<Booking> bookings = bookingRepository.getUserItemsBookingsIfStateWaiting(userId, pageWithFromAndSize);
             for (Booking b : bookings) {
                 bookingDtoList.add(bookingMapper.bookingDtoOut(b));
             }

@@ -1,7 +1,8 @@
 package ru.practicum.shareit.item.service;
 
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -63,11 +64,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllItems(int userId) {
+    public List<ItemDto> getAllItems(int userId, Integer from, Integer size) {
         List<ItemDto> itemsWithBookings = new ArrayList<>();
+        Pageable pageWithFromAndSize = PageRequest.of(from, size);
         List<ItemDto> itemDtoList =
-                itemRepository.findAll().stream().filter(item -> item.getOwner().getId() == userId).map(itemMapper::toItemDto)
-                        .sorted(Comparator.comparing(ItemDto::getId)).collect(Collectors.toList());
+                itemRepository.findAllBy(pageWithFromAndSize)
+                        .stream()
+                        .filter(item -> item.getOwner().getId() == userId)
+                        .map(itemMapper::toItemDto)
+                        .sorted(Comparator.comparing(ItemDto::getId))
+                        .collect(Collectors.toList());
         for (ItemDto itemDto : itemDtoList) {
             ItemDto itemWithBookings = getItemById(itemDto.getId(), userId);
             itemsWithBookings.add(itemWithBookings);
@@ -76,11 +82,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItemByText(String text, int userId) {
+    public List<ItemDto> searchItemByText(String text, int userId, Integer from, Integer size) {
         if (text.isEmpty() || text.isBlank()) {
             return Collections.emptyList();
         }
-        List<Item> itemList = dbItemStorage.searchItemByText(text);
+        Pageable pageWithFromAndSize = PageRequest.of(from, size);
+        List<Item> itemList = dbItemStorage.searchItemByText(text, pageWithFromAndSize);
         return itemList.stream()
                 .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,4 +33,6 @@ public class Item {
     private String name;
     private String description;
     private Boolean available;
+    @Column(name = "request_id")
+    private long requestId;
 }

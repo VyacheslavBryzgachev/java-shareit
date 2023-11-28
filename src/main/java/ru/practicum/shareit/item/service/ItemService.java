@@ -10,9 +10,9 @@ import java.util.List;
 public interface ItemService {
     ItemDto getItemById(long itemId, int userId);
 
-    List<ItemDto> getAllItems(int userId);
+    List<ItemDto> getAllItems(int userId, Integer from, Integer size);
 
-    List<ItemDto> searchItemByText(String text, int userId);
+    List<ItemDto> searchItemByText(String text, int userId, Integer from, Integer size);
 
     Item createItem(ItemDto itemDto, int userId);
 

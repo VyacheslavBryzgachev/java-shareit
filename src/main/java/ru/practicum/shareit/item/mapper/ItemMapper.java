@@ -17,6 +17,7 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -29,6 +30,7 @@ public class ItemMapper {
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
+                .requestId(itemDto.getRequestId())
                 .build();
     }
 
@@ -62,21 +64,6 @@ public class ItemMapper {
                 .lastBooking(BookingDto.builder()
                         .id(lastBooking.getId())
                         .bookerId(lastBooking.getBookerId())
-                        .build())
-                .comments(commentsDto)
-                .build();
-    }
-
-    public ItemDto toItemDtoWithBookingsAndCommentOnlyNextBooking(Item item, BookingDto next, List<CommentDto> commentsDto) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .owner(item.getOwner().getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .nextBooking(BookingDto.builder()
-                        .id(next.getId())
-                        .bookerId(next.getBookerId())
                         .build())
                 .comments(commentsDto)
                 .build();

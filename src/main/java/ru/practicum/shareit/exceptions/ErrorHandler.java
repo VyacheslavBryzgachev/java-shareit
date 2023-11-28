@@ -11,22 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseError handleValidationException(final ValidationException exception) {
-        log.error(exception.getMessage(), exception);
-        return new ResponseError((exception.getMessage()));
-    }
-
-    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseError handleUnknownIdException(final UnknownIdException exception) {
-        log.error(exception.getMessage(), exception);
-        return new ResponseError(exception.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ResponseError handleEmailAlreadyExistsException(final EmailAlreadyExistException exception) {
         log.error(exception.getMessage(), exception);
         return new ResponseError(exception.getMessage());
     }
