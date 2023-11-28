@@ -20,5 +20,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> getItemsByRequestId(long requestId);
 
+    @Query(value = "SELECT * FROM items  i WHERE request_id IN ( :requestIds)", nativeQuery = true)
+    List<Item> getItemsByRequestIds(List<Long> requestIds);
+
     Page<Item> findAllBy(Pageable pageable);
 }

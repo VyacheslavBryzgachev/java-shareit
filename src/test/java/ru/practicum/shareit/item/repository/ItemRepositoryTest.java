@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.test.context.jdbc.SqlConfig.TransactionMode.ISOLATED;
@@ -29,13 +30,20 @@ class ItemRepositoryTest {
 
     @Test
     void searchItemsByTextTest() {
-        List<Item> items = itemRepository.searchItemsByText("desc",PageRequest.of(0, 10));
+        List<Item> items = itemRepository.searchItemsByText("desc", PageRequest.of(0, 10));
         Assertions.assertEquals(2, items.size());
     }
 
     @Test
     void getItemsByRequestIdTest() {
         List<Item> items = itemRepository.getItemsByRequestId(1);
+        Assertions.assertEquals(1, items.size());
+    }
+
+    @Test
+    void getItemsByRequestIdsTest() {
+        List<Long> requestIds = Arrays.asList(1L, 2L, 3L);
+        List<Item> items = itemRepository.getItemsByRequestIds(requestIds);
         Assertions.assertEquals(1, items.size());
     }
 

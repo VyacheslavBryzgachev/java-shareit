@@ -34,7 +34,8 @@ public class RequestServiceImpl implements RequestService {
                 .orElseThrow(() -> new UnknownIdException("Пользователя таким id=" + userId + " не найдено"));
         itemRequestDto.setRequester(user.getId());
         itemRequestDto.setCreated(LocalDateTime.now());
-        return itemRequestMapper.toItemRequestDto(dbRequestStorage.create(itemRequestMapper.toItemRequest(itemRequestDto)));
+        ItemRequest itemRequest = itemRequestMapper.toItemRequest(itemRequestDto);
+        return itemRequestMapper.toItemRequestDto(dbRequestStorage.create(itemRequest));
     }
 
     @Override
@@ -45,8 +46,15 @@ public class RequestServiceImpl implements RequestService {
                 .stream()
                 .map(itemRequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
+        List<Long> requestIds = requests.stream()
+                .map(ItemRequestDto::getId)
+                .collect(Collectors.toList());
+        List<Item> allItems = itemRepository.getItemsByRequestIds(requestIds);
+
         for (ItemRequestDto request : requests) {
-            List<Item> items = itemRepository.getItemsByRequestId(request.getId());
+            List<Item> items = allItems.stream()
+                    .filter(item -> item.getRequestId() == request.getId())
+                    .collect(Collectors.toList());
             request.setItems(items);
         }
         return requests;
@@ -73,8 +81,14 @@ public class RequestServiceImpl implements RequestService {
                 .filter(itemRequest -> itemRequest.getRequester().getId() != userId)
                 .map(itemRequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
+        List<Long> requestIds = requestsDto.stream()
+                .map(ItemRequestDto::getId)
+                .collect(Collectors.toList());
+        List<Item> allItems = itemRepository.getItemsByRequestIds(requestIds);
         for (ItemRequestDto requestDto : requestsDto) {
-            List<Item> items = itemRepository.getItemsByRequestId(requestDto.getId());
+            List<Item> items = allItems.stream()
+                    .filter(item -> item.getRequestId() == requestDto.getId())
+                    .collect(Collectors.toList());
             requestDto.setItems(items);
         }
         return requestsDto;
