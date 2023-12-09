@@ -17,6 +17,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/items")
@@ -52,14 +53,19 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<Object> searchItemByText(@RequestParam(value = "text") String text,
                                                    @RequestHeader(value = "X-Sharer-User-Id") long userId,
-                                                   @RequestParam(value = "from", defaultValue = "0", required = false) @Positive Integer from,
-                                                   @RequestParam(value = "size", defaultValue = "10", required = false) @Positive Integer size) {
+                                                   @RequestParam(value = "from", defaultValue = "0", required = false)
+                                                   @Positive Integer from,
+                                                   @RequestParam(value = "size", defaultValue = "10", required = false)
+                                                   @Positive Integer size) {
+        if (text.isEmpty() || text.isBlank()) {
+            return ResponseEntity.ok(Collections.EMPTY_LIST);
+        }
         return itemClient.searchItemByText(text, userId, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> createComment(@Valid @RequestBody CommentDto commentDto, @PathVariable Long itemId,
-                                            @RequestHeader(value = "X-Sharer-User-Id") long userId) {
+                                                @RequestHeader(value = "X-Sharer-User-Id") long userId) {
         return itemClient.createComment(commentDto, itemId, userId);
     }
 }

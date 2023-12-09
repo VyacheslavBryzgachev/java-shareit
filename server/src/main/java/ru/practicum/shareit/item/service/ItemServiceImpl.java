@@ -23,7 +23,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,9 +82,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItemByText(String text, Integer userId, Integer from, Integer size) {
-        if (text.isEmpty() || text.isBlank()) {
-            return Collections.emptyList();
-        }
         Pageable pageWithFromAndSize = PageRequest.of(from, size);
         List<Item> itemList = dbItemStorage.searchItemByText(text, pageWithFromAndSize);
         return itemList.stream()

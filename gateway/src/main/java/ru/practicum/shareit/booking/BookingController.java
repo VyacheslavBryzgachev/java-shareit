@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.exceptions.BookingException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -25,6 +26,9 @@ public class BookingController {
     @PostMapping
     public ResponseEntity<Object> createBooking(@Valid @RequestBody BookingDto bookingDto,
                                                 @RequestHeader(value = "X-Sharer-User-Id") long userId) {
+        if (bookingDto.getEnd().isBefore(bookingDto.getStart()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
+            throw new BookingException("Дата окончания бронирования не может быть меньше или быть такой же как дата начала бронирования");
+        }
         return bookingClient.createBooking(userId, bookingDto);
     }
 

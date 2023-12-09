@@ -247,13 +247,6 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void searchItemByTextReturnEmptyListIfTextIsBlank() {
-        List<ItemDto> actual = itemService.searchItemByText("", 1, 0, 2);
-        List<ItemDto> expected = Collections.emptyList();
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
     void createCommentReturnValidCommentIfValidArgument() {
         CommentDto commentDto = CommentDto.builder()
                 .text("Комментарий")

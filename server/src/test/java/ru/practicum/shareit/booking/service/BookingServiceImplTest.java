@@ -94,22 +94,6 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void createBookingThrowExceptionIfStartEqualEnd() {
-        BookingDto bookingDto = BookingDto
-                .builder()
-                .bookerId(1)
-                .itemId(1)
-                .status(Status.WAITING)
-                .start(LocalDateTime.of(2023, 11, 11, 15, 30, 15))
-                .end(LocalDateTime.of(2023, 11, 11, 15, 30, 15))
-                .build();
-        BookingException exception = Assertions.assertThrows(BookingException.class,
-                () -> bookingService.createBooking(bookingDto, 1));
-        Assertions.assertEquals(exception.getMessage(),
-                "Дата окончания бронирования не может быть меньше или быть такой же как дата начала бронирования");
-    }
-
-    @Test
     void createBookingThrowExceptionsIfItemAvailableFalse() {
         BookingDto bookingDto = BookingDto
                 .builder()
@@ -149,8 +133,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         BookingDtoOut actual = bookingService.getBookingById(1, 1);
@@ -184,8 +168,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         bookingDtoOuts.add(bookingDto);
@@ -242,8 +226,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         bookingDtoOuts.add(bookingDto);
@@ -286,8 +270,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         bookingDtoOuts.add(bookingDto);
@@ -323,8 +307,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,12,23,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 12, 23, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.APPROVED)
                 .build();
         BookingDtoOut bookingDto2 = BookingDtoOut
@@ -350,8 +334,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,12,23,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 12, 23, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.APPROVED)
                 .build();
         bookingDtoOuts.add(bookingDto1);
@@ -388,8 +372,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         bookingDtoOuts.add(bookingDto1);
@@ -425,8 +409,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,12,23,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 12, 23, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.APPROVED)
                 .build();
         bookingDtoOuts.add(bookingDto1);
@@ -476,8 +460,8 @@ class BookingServiceImplTest {
                         .available(true)
                         .requestId(0)
                         .build())
-                .start(LocalDateTime.of(2023,11,24,15,35,30))
-                .end(LocalDateTime.of(2023,12,24,15,35,30))
+                .start(LocalDateTime.of(2023, 11, 24, 15, 35, 30))
+                .end(LocalDateTime.of(2023, 12, 24, 15, 35, 30))
                 .status(Status.WAITING)
                 .build();
         bookingDtoOuts.add(bookingDto1);

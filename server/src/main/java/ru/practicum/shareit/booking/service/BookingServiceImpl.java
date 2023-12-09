@@ -34,9 +34,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOut createBooking(BookingDto bookingDto, long userId) {
-        if (bookingDto.getEnd().isBefore(bookingDto.getStart()) || bookingDto.getStart().equals(bookingDto.getEnd())) {
-            throw new BookingException("Дата окончания бронирования не может быть меньше или быть такой же как дата начала бронирования");
-        }
         Item item = itemRepository.findById(bookingDto.getItemId())
                 .orElseThrow(() -> new UnknownIdException("Вещь с таким id=" + bookingDto.getItemId() + " не найдена"));
         if (item.getAvailable().equals(false)) {
